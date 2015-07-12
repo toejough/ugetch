@@ -13,7 +13,27 @@ utf-8 getch, with support for arrows, tab, echoing, etc
  :target: https://waffle.io/toejough/ugetch 
  :alt: 'Stories in Ready'
 
+* `api`_
 * `contribution`_
+
+API
+===
+
+* `getkey`_
+
+getkey
+------
+
+Gets a key from the ``infile`` and returns it to the user.  Currently supports returning ASCII chars.
+Any other keys entered (such as utf-8, arrow keys, etc) will result in returning individual bytes, one at a time.
+
+Parameters:
+
+* ``infile`` - defaults to the ``sys.stdin`` file, as it is set at call time.
+
+Returns:
+
+* ``key`` - a string value corresponding to the key read in from the TTY ('a', 'B', '-', etc).
 
 contribution
 ============
