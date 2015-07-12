@@ -24,8 +24,9 @@ API
 getkey
 ------
 
-Gets a key from the ``infile`` and returns it to the user.  Currently supports returning ASCII chars.
-Any other keys entered (such as utf-8, arrow keys, etc) will result in returning individual bytes, one at a time.
+Gets a "key" from the ``infile`` and returns it to the user, where "key" is a character or glyph.
+Currently supports parsing ASCII and UTF-8.
+Any other keys entered (such as arrow keys, UTF-16, etc) will result in returning individual bytes, one at a time.
 
 Parameters:
 
