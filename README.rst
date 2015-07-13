@@ -24,9 +24,13 @@ API
 getkey
 ------
 
-Gets a "key" from the ``infile`` and returns it to the user, where "key" is a character or glyph.
-Currently supports parsing ASCII and UTF-8.
+Gets a "key" from the ``infile`` and returns it to the user, where "key" is a character, glyph, or string describing a control key.
+
+Currently supports parsing ASCII, UTF-8, and tab.
 Any other keys entered (such as arrow keys, UTF-16, etc) will result in returning individual bytes, one at a time.
+
+The tab key is represented as a string: 'TAB'.  This is not a "character", but it *is* a "key".  The implementation
+of keys may change in the future, but for now this seems to be simple and clear.
 
 Parameters:
 
@@ -34,7 +38,7 @@ Parameters:
 
 Returns:
 
-* ``key`` - a string value corresponding to the key read in from the TTY ('a', 'B', '-', etc).
+* ``key`` - a string value corresponding to the key read in from the TTY ('a', 'B', '-', '☢', 'TAB', etc).
 
 contribution
 ============
