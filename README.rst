@@ -26,11 +26,9 @@ getkey
 
 Gets a "key" from the ``infile`` and returns it to the user, where "key" is a character, glyph, or string describing a control key.
 
-Currently supports parsing ASCII, UTF-8, and tab.
-Any other keys entered (such as arrow keys, UTF-16, etc) will result in returning individual bytes, one at a time.
-
-The tab key is represented as a string: 'TAB'.  This is not a "character", but it *is* a "key".  The implementation
-of keys may change in the future, but for now this seems to be simple and clear.
+Currently supports parsing ASCII, UTF-8, and some `special characters`_ as listed below.
+Any other keys entered will result in returning individual bytes, one at a time.
+*Pull requests adding special key support are welcome*
 
 Parameters:
 
@@ -39,6 +37,21 @@ Parameters:
 Returns:
 
 * ``key`` - a string value corresponding to the key read in from the TTY ('a', 'B', '-', '☢', 'TAB', etc).
+
+Special Characters
+==================
+The following special characters are supported for VT220-like terminals.  This is all I personally have to test on,
+but pull reqeusts with additional support are welcome.  Issue #14 will make integration of new keys easier.
+
+Currently, special keys are supported by returning their name as a string, instead of a single character or glyph, as ASCII and UTF-8 do.
+This is not a "character", but it *is* a "key".  The implementation
+of keys may change in the future, but for now this seems to be simple and clear.
+
+* TAB
+* UP
+* DOWN
+* LEFT
+* RIGHT
 
 contribution
 ============
