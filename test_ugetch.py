@@ -34,7 +34,7 @@ def assert_expected(p, expected):
     '''Assert that we get the expected value'''
     index = p.expect_exact([expected, pexpect.EOF, pexpect.TIMEOUT])
     assert index == 0, "did not find expected ({}) in output ({})".format(
-        value, p.before
+        expected, p.before
     )
 
 
@@ -44,7 +44,7 @@ def in_vs_out(input_values):
     p = start_cli_shim()
     # test each char
     for value in input_values:
-        p.expect_exact("hit a key to print its representation: ")
+        assert_expected(p, "hit a key to print its representation: ")
         p.send(value)
         assert_expected(p, value)
 
@@ -72,6 +72,24 @@ def test_getch_tab():
     assert_expected(p, 'TAB')
     p.sendcontrol('i')
     assert_expected(p, 'TAB')
+
+
+def test_getch_arrows():
+    # get shim
+    p = start_cli_shim()
+    # test each arrow
+    KEY_UP = '\x1b[A'
+    KEY_DOWN = '\x1b[B'
+    KEY_RIGHT = '\x1b[C'
+    KEY_LEFT = '\x1b[D'
+    p.send(KEY_UP)
+    assert_expected(p, 'UP')
+    p.send(KEY_DOWN)
+    assert_expected(p, 'DOWN')
+    p.send(KEY_LEFT)
+    assert_expected(p, 'LEFT')
+    p.send(KEY_RIGHT)
+    assert_expected(p, 'RIGHT')
 
 
 if __name__ == '__main__':

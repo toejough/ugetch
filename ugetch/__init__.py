@@ -65,11 +65,42 @@ def tab_parser(infile):
     return key
 
 
+def arrow_parser(infile):
+    '''Parse arrow keys'''
+    first_byte = _get_byte(infile)
+    key = None
+    if first_byte == 27:
+        # escape.  Check for bracket
+        second_byte = _get_byte(infile)
+        if second_byte == 91:
+            # final byte
+            final_byte = _get_byte(infile)
+            if final_byte == 65:
+                key = 'UP'
+            elif final_byte == 66:
+                key = 'DOWN'
+            elif final_byte == 67:
+                key = 'RIGHT'
+            elif final_byte == 68:
+                key = 'LEFT'
+            else:
+                _put_byte(first_byte)
+                _put_byte(second_byte)
+                _put_byte(final_byte)
+        else:
+            _put_byte(first_byte)
+            _put_byte(second_byte)
+    else:
+        _put_byte(first_byte)
+    return key
+
+
 # [ Global ]
 _DEFAULT=object()  # enable dynamic defaults
-# Tab needs to go before the ASCII parser, because it is technically in the ASCII range,
-#  and would be sucked in raw by the ASCII parser.
-_KEY_PARSERS=[tab_parser, ascii_parser, utf8_parser]  # ways to parse keys from byte lists
+# Special key parsers need to go before the ASCII parser, because
+#   their first byte is generally in the ASCII range,
+#   and would be sucked in raw by the ASCII parser.
+_KEY_PARSERS=[tab_parser, arrow_parser, ascii_parser, utf8_parser]  # ways to parse keys from byte lists
 _BYTES=[]  # byte buffer from the input file
 
 
