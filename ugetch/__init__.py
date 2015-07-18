@@ -14,40 +14,62 @@ import termios
 def ascii_parser(infile):
     '''Parse ascii bytes to ascii keys'''
     byte = _get_byte(infile)
+    key = None
     if byte < 128:
-        return chr(byte)
+        key = chr(byte)
     else:
         _put_byte(byte)
+    return key
 
 
 def utf8_parser(infile):
     '''Parse utf-8 bytes to a string'''
     first_byte = _get_byte(infile)
+    key = None
+    utf8_bytes = [first_byte]
     # get byte string in py 2 and 3
-    if sys.version_info.major == 3:
-        string = chr(first_byte)
+    try:
+        if sys.version_info.major == 3:
+            key = chr(first_byte)
+        else:
+            if 194 <= first_byte <= 223:
+                # 2 bytes
+                utf8_bytes.append(_get_byte(infile))
+            elif 224 <= first_byte <= 239:
+                # 3 bytes
+                utf8_bytes.append(_get_byte(infile))
+                utf8_bytes.append(_get_byte(infile))
+            elif 240 <= first_byte <= 244:
+                # 4 bytes
+                utf8_bytes.append(_get_byte(infile))
+                utf8_bytes.append(_get_byte(infile))
+                utf8_bytes.append(_get_byte(infile))
+            byte_string = ''.join([chr(b) for b in utf8_bytes])
+            key = byte_string.decode('utf-8')
+    except:
+        # couldn't parse utf-8 out.  not a failure, just not a success.
+        for b in utf8_bytes:
+            _put_byte(b)
+    return key
+
+
+def tab_parser(infile):
+    '''Parse a tab key out'''
+    first_byte = _get_byte(infile)
+    key = None
+    if first_byte == 9:
+        # Tab key
+        key = 'TAB'
     else:
-        utf8_bytes = [first_byte]
-        if 194 <= first_byte <= 223:
-            # 2 bytes
-            utf8_bytes.append(_get_byte(infile))
-        elif 224 <= first_byte <= 239:
-            # 3 bytes
-            utf8_bytes.append(_get_byte(infile))
-            utf8_bytes.append(_get_byte(infile))
-        elif 240 <= first_byte <= 244:
-            # 4 bytes
-            utf8_bytes.append(_get_byte(infile))
-            utf8_bytes.append(_get_byte(infile))
-            utf8_bytes.append(_get_byte(infile))
-        byte_string = ''.join([chr(b) for b in utf8_bytes])
-        string = byte_string.decode('utf-8')
-    return string
+        _put_byte(first_byte)
+    return key
 
 
 # [ Global ]
 _DEFAULT=object()  # enable dynamic defaults
-_KEY_PARSERS=[ascii_parser, utf8_parser]  # ways to parse keys from byte lists
+# Tab needs to go before the ASCII parser, because it is technically in the ASCII range,
+#  and would be sucked in raw by the ASCII parser.
+_KEY_PARSERS=[tab_parser, ascii_parser, utf8_parser]  # ways to parse keys from byte lists
 _BYTES=[]  # byte buffer from the input file
 
 

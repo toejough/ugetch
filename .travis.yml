@@ -1,5 +1,11 @@
+# basic config
 language: python
 python: 3.4
 install:
 - pip install tox
 script: tox
+
+# whitelist
+branches:
+    only:
+        - master
